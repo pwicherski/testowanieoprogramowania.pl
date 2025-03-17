@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="Wydarzenia związane z testowaniem oprogramowania - konferencje, meetupy">
+    <title>Wydarzenia - Testowanie Oprogramowania</title>
+    <link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      
+      .tab {
+        background: #232323;
+        color: white;
+        padding: 10px 30px;
+        margin: 0 5px;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        border: 2px solid #232323;
+        transition: 0.25s;
+      }
+      
+      .tab:hover, .tab.active {
+        background: white;
+        color: #232323;
+      }
+      
+      .links {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+      }
+      
+      .links a {
+        width: auto;
+        padding: 10px 20px;
+        margin: 0 5px;
+        font-size: 14px;
+      }
+      
+      .event {
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        padding: 20px 0;
+        font-family: 'Open Sans', sans-serif;
+      }
+      
+      .event h3 {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        font-size: 22px;
+        font-weight: 600;
+        color: #008000;
+      }
+      
+      .event-info {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        font-size: 16px;
+      }
+      
+      .event-info i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+      }
+      
+      .event-status {
+        margin-top: 10px;
+        font-weight: 600;
+      }
+      
+      .twitter-link {
+        color: #1DA1F2;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      
+      .twitter-link:hover {
+        text-decoration: underline;
+      }
+      
+      .home-link {
+        display: inline-block;
+        margin: 20px 0;
+        font-size: 14px;
+        width: auto;
+        padding: 10px 20px;
+      }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  </head>
+  <body>
+    <a href="index.html"><img src="https://raw.githubusercontent.com/pwicherski/testowanieoprogramowania.pl/main/quac-logo-05.png"></a>
+    <h3 style="font-family: 'Open Sans', sans-serif; font-weight: 300;">Wydarzenia - Testowanie Oprogramowania</h3>
+    
+    <div class="container">
+      <div class="tabs">
+        <div class="tab active" id="tab-wszystkie">WSZYSTKIE</div>
+        <div class="tab" id="tab-meetupy">MEETUPY</div>
+        <div class="tab" id="tab-konferencje">KONFERENCJE</div>
+      </div>
+      
+      <div id="events-container">
+        <!-- Events will be loaded here from JSON -->
+      </div>
+    </div>
+    
+    <script>
+      // Function to parse Polish date format (e.g., "12 maja 2023")
+      function parseEventDate(dateStr) {
+        // Map of Polish month names to their numeric values
+        const monthsMap = {
+          'stycznia': 0, 'lutego': 1, 'marca': 2, 'kwietnia': 3, 'maja': 4, 'czerwca': 5,
+          'lipca': 6, 'sierpnia': 7, 'września': 8, 'października': 9, 'listopada': 10, 'grudnia': 11
+        };
+        
+        // Split the date string into components
+        const parts = dateStr.split(' ');
+        
+        // Handle date ranges (e.g., "12-13 maja 2023")
+        let day = parts[0];
+        if (day.includes('-')) {
+          // For date ranges, use the first date
+          day = day.split('-')[0];
+        }
+        
+        const month = monthsMap[parts[1].toLowerCase()];
+        const year = parseInt(parts[2]);
+        
+        // Return a Date object
+        return new Date(year, month, parseInt(day));
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        // Function to load and display events
+        function loadAndDisplayEvents() {
+          Promise.all([
+            fetch('konferencje.json').then(response => response.json()),
+            fetch('meetupy.json').then(response => response.json())
+          ])
+            .then(([konferencje, meetupy]) => {
+              // Store data globally for reuse
+              data = {
+                konferencje: konferencje,
+                meetupy: meetupy,
+                wszystkie: [...konferencje, ...meetupy]
+              };
+              
+              // Initially display all events
+              displayEvents(data.wszystkie);
+            })
+            .catch(error => {
+              console.error('Błąd podczas ładowania danych:', error);
+              document.getElementById('events-container').innerHTML = '<p>Błąd podczas ładowania wydarzeń. Spróbuj ponownie później.</p>';
+            });
+        }
+        
+        // Load events on page load
+        loadAndDisplayEvents();
+        
+        // Tab switching functionality
+        document.getElementById('tab-wszystkie').addEventListener('click', function() {
+          setActiveTab('tab-wszystkie');
+          displayEvents(data.wszystkie);
+        });
+        
+        document.getElementById('tab-meetupy').addEventListener('click', function() {
+          setActiveTab('tab-meetupy');
+          displayEvents(data.meetupy);
+        });
+        
+        document.getElementById('tab-konferencje').addEventListener('click', function() {
+          setActiveTab('tab-konferencje');
+          displayEvents(data.konferencje);
+        });
+        
+        // Helper function to set active tab
+        function setActiveTab(activeTabId) {
+          document.getElementById('tab-wszystkie').classList.remove('active');
+          document.getElementById('tab-meetupy').classList.remove('active');
+          document.getElementById('tab-konferencje').classList.remove('active');
+          document.getElementById(activeTabId).classList.add('active');
+        }
+      });
+      
+      let data = [];
+      
+      function displayEvents(events) {
+        const container = document.getElementById('events-container');
+        container.innerHTML = '';
+        
+        // Sort events by date from closest to furthest
+        events.sort((a, b) => {
+          // Parse the date strings to Date objects for comparison
+          const dateA = parseEventDate(a.data);
+          const dateB = parseEventDate(b.data);
+          return dateA - dateB;
+        });
+        
+        events.forEach(event => {
+          const eventElement = document.createElement('div');
+          eventElement.className = 'event';
+          
+          // Twitter handles removed as requested
+          
+          let statusHtml = '';
+          if (event.status && event.status !== 'Rejestracja otwarta') {
+            statusHtml = `<div class="event-status"><i class="fas fa-ticket-alt"></i> ${event.status}</div>`;
+          }
+          
+          eventElement.innerHTML = `
+            <h3>${event.nazwa}</h3>
+            <div class="event-info">
+              <i class="far fa-calendar-alt"></i> ${event.data}
+            </div>
+            <div class="event-info">
+              <i class="fas fa-map-marker-alt"></i> ${event.miejsce}
+            </div>
+            <div class="event-info">
+              <i class="fas fa-tag"></i> ${event.kategoria}
+            </div>
+            ${statusHtml}
+          `;
+          
+          // Make the entire event div clickable
+          eventElement.style.cursor = 'pointer';
+          eventElement.addEventListener('click', function() {
+            window.open(event.link, '_blank');
+          });
+          
+          container.appendChild(eventElement);
+        });
+      }
+    </script>
+  </body>
+</html>

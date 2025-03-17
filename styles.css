@@ -26,6 +26,13 @@ a{
   transition: 0.25s;
 }
 
+a:has(img) {
+  background: transparent;
+  padding: 0;
+  border: none;
+  width: auto;
+}
+
 a:hover{
   background: white;
   color: #232323;

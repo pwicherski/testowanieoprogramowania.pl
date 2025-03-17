@@ -1,0 +1,20 @@
+[
+  {
+    "nazwa": "Test Automation Days 2025",
+    "kategoria": "Konferencja",
+    "data": "5-6 marca 2025",
+    "miejsce": "Rotterdam, Holandia",
+    "link": "https://testautomationdays.com/",
+    "twitter": "testautomationd",
+    "status": "Rejestracja otwarta"
+  },
+  {
+    "nazwa": "Testing Peers Conference 2025",
+    "kategoria": "Konferencja",
+    "data": "13 marca 2025",
+    "miejsce": "Nottingham, UK",
+    "link": "https://testingpeers.com/",
+    "twitter": "testingpeers",
+    "status": ""
+  }
+]
