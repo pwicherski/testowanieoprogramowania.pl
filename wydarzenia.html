@@ -241,15 +241,44 @@
           return '';
         }
         
-        const date = parseEventDate(dateStr);
+        // Check if it's a date range (e.g., "05-07 listopada 2025")
+        const parts = dateStr.split(' ');
+        const dayPart = parts[0];
         
-        // Check if date is valid (not the default far future date)
-        if (date.getFullYear() === 9999) {
-          return dateStr;
-        }
-        
-        const dayOfWeek = getDayOfWeekInPolish(date.getDay());
-        return `${dateStr} (${dayOfWeek})`;
+        if (dayPart.includes('-')) {
+          // It's a date range, handle both dates
+          const [startDay, endDay] = dayPart.split('-');
+          const month = parts[1];
+          const year = parts[2];
+          
+          // Create date objects for both start and end dates
+          const startDateStr = `${startDay} ${month} ${year}`;
+          const endDateStr = `${endDay} ${month} ${year}`;
+          
+          const startDate = parseEventDate(startDateStr);
+          const endDate = parseEventDate(endDateStr);
+          
+          // Check if dates are valid
+          if (startDate.getFullYear() === 9999 || endDate.getFullYear() === 9999) {
+            return dateStr;
+          }
+          
+          const startDayOfWeek = getDayOfWeekInPolish(startDate.getDay());
+          const endDayOfWeek = getDayOfWeekInPolish(endDate.getDay());
+          
+          return `${dateStr} (${startDayOfWeek} - ${endDayOfWeek})`;
+        } else {
+          // It's a single date
+          const date = parseEventDate(dateStr);
+          
+          // Check if date is valid (not the default far future date)
+          if (date.getFullYear() === 9999) {
+            return dateStr;
+          }
+          
+          const dayOfWeek = getDayOfWeekInPolish(date.getDay());
+          return `${dateStr} (${dayOfWeek})`;
+      }
       }
       
       document.addEventListener('DOMContentLoaded', function() {
@@ -266,6 +295,9 @@
                 meetupy: meetupy,
                 wszystkie: [...konferencje, ...meetupy]
               };
+              
+              // Update tab counters immediately after loading data
+              updateTabCounters();
               
               // Initially display all events
               displayEvents(data.wszystkie);
@@ -311,6 +343,29 @@
       
       let data = [];
       
+      // Function to filter future events
+      function filterFutureEvents(events) {
+        const today = new Date();
+        // Reset time to start of day for fair comparison
+        today.setHours(0, 0, 0, 0);
+        
+        return events.filter(event => {
+          const eventDate = parseEventDate(event.data);
+          return eventDate >= today && eventDate.getFullYear() !== 9999;
+        });
+      }
+      
+      // Function to update tab counters
+      function updateTabCounters() {
+        const futureWszystkie = filterFutureEvents(data.wszystkie);
+        const futureMeetupy = filterFutureEvents(data.meetupy);
+        const futureKonferencje = filterFutureEvents(data.konferencje);
+        
+        document.getElementById('tab-wszystkie').textContent = `WSZYSTKIE [${futureWszystkie.length}]`;
+        document.getElementById('tab-meetupy').textContent = `MEETUPY [${futureMeetupy.length}]`;
+        document.getElementById('tab-konferencje').textContent = `KONFERENCJE [${futureKonferencje.length}]`;
+      }
+      
       function displayEvents(events) {
         const container = document.getElementById('events-container');
         container.innerHTML = '';
@@ -322,6 +377,9 @@
           const dateB = parseEventDate(b.data);
           return dateA - dateB;
         });
+        
+        // Update tab counters after sorting
+        updateTabCounters();
         
         // Filter out events with no name
         events.filter(event => event.nazwa && event.nazwa.trim() !== '').forEach(event => {

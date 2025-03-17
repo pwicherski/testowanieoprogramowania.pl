@@ -4,48 +4,42 @@
       "kategoria": "Meetup",
       "data": "24 kwietnia 2025",
       "miejsce": "Warszawa",
-      "link": "https://app.evenea.pl/event/qatesterwwa/",
-      "twitter": ""
+      "link": "https://app.evenea.pl/event/qatesterwwa/"
     },
     {
       "nazwa": "Kolektyw Gliwice",
       "kategoria": "Meetup",
       "data": "25 marca 2025",
       "miejsce": "Gliwice",
-      "link": "https://kolektyw-gliwice.pl/",
-      "twitter": ""
+      "link": "https://kolektyw-gliwice.pl/"
     },
     {
       "nazwa": "Warsaw Testers' Forum #2",
       "kategoria": "Meetup",
       "data": "27 marca 2025",
       "miejsce": "Warszawa",
-      "link": "https://www.facebook.com/events/643619491389538",
-      "twitter": ""
+      "link": "https://www.facebook.com/events/643619491389538"
     },
     {
       "nazwa": "ŚlonzaczQA #19",
       "kategoria": "Meetup",
       "data": "20 marca 2025",
       "miejsce": "Katowice",
-      "link": "https://www.facebook.com/events/1569187930315471",
-      "twitter": ""
+      "link": "https://www.facebook.com/events/1569187930315471"
     },
     {
       "nazwa": "Po szklanie i na meetup! - Meetup QA w Łodzi",
       "kategoria": "Meetup",
       "data": "27 marca 2025",
       "miejsce": "Łódź",
-      "link": "https://www.facebook.com/events/1674650500102548/",
-      "twitter": ""
+      "link": "https://www.facebook.com/events/1674650500102548/"
     },
     {
         "nazwa": "Pierwszy Jit QA Meetup",
         "kategoria": "Meetup",
         "data": "27 marca 2025",
         "miejsce": "Online",
-        "link": "https://events.teams.microsoft.com/event/ce068226-b39c-415f-b5d5-e8ee5bdf8caf@888d5a15-2cbe-4e8b-b206-35923762a297",
-        "twitter": ""
+        "link": "https://events.teams.microsoft.com/event/ce068226-b39c-415f-b5d5-e8ee5bdf8caf@888d5a15-2cbe-4e8b-b206-35923762a297"
       }
     
   ]
