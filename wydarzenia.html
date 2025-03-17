@@ -62,7 +62,23 @@
         text-align: left;
         font-size: 22px;
         font-weight: 600;
-        color: #008000;
+        color: #00468B;
+      }
+      
+      .event h3 a {
+        color: #00468B;
+        text-decoration: none;
+        background: transparent;
+        padding: 0;
+        width: auto;
+        border: none;
+        display: inline;
+      }
+      
+      .event h3 a:hover {
+        text-decoration: underline;
+        background: transparent;
+        color: #00468B;
       }
       
       .event-info {
@@ -91,6 +107,23 @@
       
       .twitter-link:hover {
         text-decoration: underline;
+      }
+      
+      .event-button {
+        display: inline-block;
+        background: #232323;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        text-decoration: none;
+        border: 2px solid #232323;
+        transition: 0.25s;
+      }
+      
+      .event-button:hover {
+        background: white;
+        color: #232323;
       }
       
       .home-link {
@@ -123,27 +156,48 @@
     <script>
       // Function to parse Polish date format (e.g., "12 maja 2023")
       function parseEventDate(dateStr) {
+        // Handle empty date strings
+        if (!dateStr || dateStr.trim() === '') {
+          // Return a far future date for empty dates (will sort to the end)
+          return new Date(9999, 11, 31);
+        }
+        
         // Map of Polish month names to their numeric values
         const monthsMap = {
           'stycznia': 0, 'lutego': 1, 'marca': 2, 'kwietnia': 3, 'maja': 4, 'czerwca': 5,
           'lipca': 6, 'sierpnia': 7, 'września': 8, 'października': 9, 'listopada': 10, 'grudnia': 11
         };
         
-        // Split the date string into components
-        const parts = dateStr.split(' ');
-        
-        // Handle date ranges (e.g., "12-13 maja 2023")
-        let day = parts[0];
-        if (day.includes('-')) {
-          // For date ranges, use the first date
-          day = day.split('-')[0];
+        try {
+          // Split the date string into components
+          const parts = dateStr.split(' ');
+          
+          // Check if we have all parts needed
+          if (parts.length < 3) {
+            return new Date(9999, 11, 31); // Invalid format, sort to end
+          }
+          
+          // Handle date ranges (e.g., "12-13 maja 2023")
+          let day = parts[0];
+          if (day.includes('-')) {
+            // For date ranges, use the first date
+            day = day.split('-')[0];
+          }
+          
+          const month = monthsMap[parts[1].toLowerCase()];
+          const year = parseInt(parts[2]);
+          
+          // Check if all parts are valid
+          if (isNaN(day) || month === undefined || isNaN(year)) {
+            return new Date(9999, 11, 31); // Invalid data, sort to end
+          }
+          
+          // Return a Date object
+          return new Date(year, month, parseInt(day));
+        } catch (error) {
+          console.error('Error parsing date:', error);
+          return new Date(9999, 11, 31); // Error case, sort to end
         }
-        
-        const month = monthsMap[parts[1].toLowerCase()];
-        const year = parseInt(parts[2]);
-        
-        // Return a Date object
-        return new Date(year, month, parseInt(day));
       }
       
       document.addEventListener('DOMContentLoaded', function() {
@@ -212,7 +266,8 @@
           return dateA - dateB;
         });
         
-        events.forEach(event => {
+        // Filter out events with no name
+        events.filter(event => event.nazwa && event.nazwa.trim() !== '').forEach(event => {
           const eventElement = document.createElement('div');
           eventElement.className = 'event';
           
@@ -223,26 +278,27 @@
             statusHtml = `<div class="event-status"><i class="fas fa-ticket-alt"></i> ${event.status}</div>`;
           }
           
+          // Format category text based on type (lowercase first letter)
+          const categoryText = event.kategoria.toLowerCase() === 'Meetup'.toLowerCase() ? 'meetup' : 'konferencja';
+          
           eventElement.innerHTML = `
-            <h3>${event.nazwa}</h3>
+            <h3><a href="${event.link}" target="_blank">${event.nazwa}</a></h3>
             <div class="event-info">
-              <i class="far fa-calendar-alt"></i> ${event.data}
+              <i class="fas fa-calendar-alt"></i> ${event.data}
             </div>
             <div class="event-info">
               <i class="fas fa-map-marker-alt"></i> ${event.miejsce}
             </div>
             <div class="event-info">
-              <i class="fas fa-tag"></i> ${event.kategoria}
+              <i class="fas fa-tag"></i> ${categoryText}
+            </div>
+            <div class="event-info">
+              <h3><i class="fas fa-external-link-alt"></i> <a href="${event.link}" target="_blank"">Link do wydarzenia</a></h3>
             </div>
             ${statusHtml}
           `;
           
-          // Make the entire event div clickable
-          eventElement.style.cursor = 'pointer';
-          eventElement.addEventListener('click', function() {
-            window.open(event.link, '_blank');
-          });
-          
+          // Remove the clickable behavior from the entire div since we now have a dedicated link
           container.appendChild(eventElement);
         });
       }
