@@ -295,6 +295,11 @@
           displayEvents(data.konferencje);
         });
         
+        // Add event listener for the 'Dodaj wydarzenie' button
+        document.getElementById('add-event-btn').addEventListener('click', function() {
+          window.open('https://github.com/pwicherski/testowanieoprogramowania.pl/tree/main/wydarzenia', '_blank');
+        });
+        
         // Helper function to set active tab
         function setActiveTab(activeTabId) {
           document.getElementById('tab-wszystkie').classList.remove('active');
