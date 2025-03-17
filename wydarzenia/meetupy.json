@@ -30,8 +30,7 @@
       "miejsce": "Katowice",
       "link": "https://www.facebook.com/events/1569187930315471",
       "twitter": ""
-    }
-    ,
+    },
     {
       "nazwa": "Po szklanie i na meetup! - Meetup QA w Łodzi",
       "kategoria": "Meetup",
@@ -39,6 +38,15 @@
       "miejsce": "Łódź",
       "link": "https://www.facebook.com/events/1674650500102548/",
       "twitter": ""
-    }
+    },
+    {
+        "nazwa": "Pierwszy Jit QA Meetup",
+        "kategoria": "Meetup",
+        "data": "27 marca 2025, godz. 18:00",
+        "miejsce": "Online",
+        "link": "http://bit.ly/43KdKX7",
+        "twitter": ""
+      }
+    
   ]
   

@@ -60,7 +60,7 @@
         margin: 0;
         padding: 0;
         text-align: left;
-        font-size: 22px;
+        font-size: 26px;
         font-weight: 600;
         color: #00468B;
       }
@@ -133,6 +133,31 @@
         width: auto;
         padding: 10px 20px;
       }
+      
+      .add-event-btn {
+        background: #00468B;
+        color: white;
+        padding: 10px 20px;
+        margin-left: 10px;
+        border: 2px solid #00468B;
+        border-radius: 4px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.25s;
+        display: flex;
+        align-items: center;
+      }
+      
+      .add-event-btn i {
+        margin-right: 8px;
+      }
+      
+      .add-event-btn:hover {
+        background: white;
+        color: #00468B;
+      }
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -146,6 +171,7 @@
         <div class="tab active" id="tab-wszystkie">WSZYSTKIE</div>
         <div class="tab" id="tab-meetupy">MEETUPY</div>
         <div class="tab" id="tab-konferencje">KONFERENCJE</div>
+        <button id="add-event-btn" class="add-event-btn"><i class="fas fa-plus"></i> Dodaj wydarzenie</button>
       </div>
       
       <div id="events-container">
@@ -154,6 +180,15 @@
     </div>
     
     <script>
+      // Function to convert English day names to Polish
+      function getDayOfWeekInPolish(dayIndex) {
+        const daysInPolish = [
+          'niedziela', 'poniedziałek', 'wtorek', 'środa', 
+          'czwartek', 'piątek', 'sobota'
+        ];
+        return daysInPolish[dayIndex];
+      }
+      
       // Function to parse Polish date format (e.g., "12 maja 2023")
       function parseEventDate(dateStr) {
         // Handle empty date strings
@@ -200,12 +235,29 @@
         }
       }
       
+      // Function to format date with day of week
+      function formatDateWithDayOfWeek(dateStr) {
+        if (!dateStr || dateStr.trim() === '') {
+          return '';
+        }
+        
+        const date = parseEventDate(dateStr);
+        
+        // Check if date is valid (not the default far future date)
+        if (date.getFullYear() === 9999) {
+          return dateStr;
+        }
+        
+        const dayOfWeek = getDayOfWeekInPolish(date.getDay());
+        return `${dateStr} (${dayOfWeek})`;
+      }
+      
       document.addEventListener('DOMContentLoaded', function() {
         // Function to load and display events
         function loadAndDisplayEvents() {
           Promise.all([
-            fetch('konferencje.json').then(response => response.json()),
-            fetch('meetupy.json').then(response => response.json())
+            fetch('wydarzenia/konferencje.json').then(response => response.json()),
+            fetch('wydarzenia/meetupy.json').then(response => response.json())
           ])
             .then(([konferencje, meetupy]) => {
               // Store data globally for reuse
@@ -284,7 +336,7 @@
           eventElement.innerHTML = `
             <h3><a href="${event.link}" target="_blank">${event.nazwa}</a></h3>
             <div class="event-info">
-              <i class="fas fa-calendar-alt"></i> ${event.data}
+              <i class="fas fa-calendar-alt"></i> ${formatDateWithDayOfWeek(event.data)}
             </div>
             <div class="event-info">
               <i class="fas fa-map-marker-alt"></i> ${event.miejsce}
