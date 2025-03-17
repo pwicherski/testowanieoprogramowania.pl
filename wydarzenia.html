@@ -161,6 +161,15 @@
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-423060569"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-423060569');
+    </script>
   </head>
   <body>
     <a href="index.html"><img src="https://raw.githubusercontent.com/pwicherski/testowanieoprogramowania.pl/main/quac-logo-05.png"></a>
@@ -397,7 +406,7 @@
           const categoryText = event.kategoria === 'Meetup' ? 'Meetup' : 'Konferencja';
           
           eventElement.innerHTML = `
-            <h3><a href="${event.link}" target="_blank">${event.nazwa}</a></h3>
+            <h3 style="font-size: 28px;"><a href="${event.link}" target="_blank">${event.nazwa}</a></h3>
             <div class="event-info">
               <i class="fas fa-calendar-alt"></i> ${formatDateWithDayOfWeek(event.data)}
             </div>
@@ -408,7 +417,7 @@
               <i class="fas fa-tag"></i> ${categoryText}
             </div>
             <div class="event-info">
-              <h3><i class="fas fa-link fa-sm"></i><a href="${event.link}" target="_blank">Link do wydarzenia</a></h3>
+              <i class="fas fa-link fa-sm"></i> <a href="${event.link}" target="_blank" style="font-size: 16px; text-decoration: none; color: inherit; background: transparent; padding: 0; width: auto; border: none; display: inline; transition: none;">Link do wydarzenia</a>
             </div>
             ${statusHtml}
           `;
