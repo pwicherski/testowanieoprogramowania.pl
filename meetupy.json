@@ -16,11 +16,19 @@
       "twitter": ""
     },
     {
-      "nazwa": "Warsaw Testers' Forum #1",
+      "nazwa": "Warsaw Testers' Forum #2",
       "kategoria": "Meetup",
       "data": "27 marca 2025",
       "miejsce": "Warszawa",
       "link": "https://www.facebook.com/events/643619491389538",
+      "twitter": ""
+    },
+    {
+      "nazwa": "ŚlonzaczQA #19",
+      "kategoria": "Meetup",
+      "data": "20 marca 2025",
+      "miejsce": "Katowice",
+      "link": "https://www.facebook.com/events/1569187930315471",
       "twitter": ""
     }
   ]
