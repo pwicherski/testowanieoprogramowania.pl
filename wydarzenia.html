@@ -379,8 +379,11 @@
         const container = document.getElementById('events-container');
         container.innerHTML = '';
         
+        // Filter to only show current and future events
+        const futureEvents = filterFutureEvents(events);
+        
         // Sort events by date from closest to furthest
-        events.sort((a, b) => {
+        futureEvents.sort((a, b) => {
           // Parse the date strings to Date objects for comparison
           const dateA = parseEventDate(a.data);
           const dateB = parseEventDate(b.data);
@@ -391,7 +394,7 @@
         updateTabCounters();
         
         // Filter out events with no name
-        events.filter(event => event.nazwa && event.nazwa.trim() !== '').forEach(event => {
+        futureEvents.filter(event => event.nazwa && event.nazwa.trim() !== '').forEach(event => {
           const eventElement = document.createElement('div');
           eventElement.className = 'event';
           
