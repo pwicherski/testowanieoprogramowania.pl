@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <style>
       .container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
         padding: 20px;
       }
@@ -17,6 +17,7 @@
         display: flex;
         justify-content: center;
         margin-bottom: 20px;
+        flex-wrap: nowrap;
       }
       
       .tab {
@@ -27,6 +28,7 @@
         cursor: pointer;
         font-family: 'Open Sans', sans-serif;
         font-weight: 600;
+        font-size: 16px;
         border: 2px solid #232323;
         transition: 0.25s;
       }
@@ -137,13 +139,13 @@
       .add-event-btn {
         background: #00468B;
         color: white;
-        padding: 10px 20px;
-        margin-left: 10px;
+        padding: 10px 30px;
+        margin-left: 15px;
         border: 2px solid #00468B;
         border-radius: 4px;
         font-family: 'Open Sans', sans-serif;
         font-weight: 600;
-        font-size: 16px;
+        font-size: 18px;
         cursor: pointer;
         transition: 0.25s;
         display: flex;
@@ -157,6 +159,125 @@
       .add-event-btn:hover {
         background: white;
         color: #00468B;
+      }
+      
+      /* Calendar Styles */
+      .calendar-container {
+        display: none;
+        font-family: 'Open Sans', sans-serif;
+      }
+      
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      
+      .calendar-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #00468B;
+      }
+      
+      .calendar-nav {
+        display: flex;
+        gap: 10px;
+      }
+      
+      .calendar-nav-btn {
+        background: #232323;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-family: 'Open Sans', sans-serif;
+        border: 2px solid #232323;
+        transition: 0.25s;
+      }
+      
+      .calendar-nav-btn:hover {
+        background: white;
+        color: #232323;
+      }
+      
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+      }
+      
+      .calendar-day-header {
+        text-align: center;
+        font-weight: 600;
+        padding: 10px;
+        background-color: #f5f5f5;
+      }
+      
+      .calendar-day {
+        min-height: 100px;
+        border: 1px solid #eee;
+        padding: 5px;
+        position: relative;
+      }
+      
+      .calendar-day.other-month {
+        background-color: #f9f9f9;
+        color: #aaa;
+      }
+      
+      .calendar-day-number {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      
+      .calendar-day.today {
+        background-color: #f0f8ff;
+        border: 1px solid #00468B;
+      }
+      
+      .calendar-event {
+        background-color: #00468B;
+        color: white;
+        padding: 2px 5px;
+        margin-bottom: 3px;
+        border-radius: 3px;
+        font-size: 12px;
+        cursor: pointer;
+        overflow: hidden;
+        white-space: normal;
+        word-wrap: break-word;
+        max-width: 100%;
+        min-height: 20px;
+        max-height: 40px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      
+      .calendar-event.meetup {
+        background-color: #4CAF50;
+      }
+      
+      .calendar-event.conference {
+        background-color: #00468B;
+      }
+      
+      .calendar-event-tooltip {
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 100;
+        display: none;
+        width: 200px;
+      }
+      
+      .calendar-event:hover + .calendar-event-tooltip {
+        display: block;
       }
     </style>
     <!-- Font Awesome for icons -->
@@ -180,11 +301,23 @@
         <div class="tab active" id="tab-wszystkie">WSZYSTKIE</div>
         <div class="tab" id="tab-meetupy">MEETUPY</div>
         <div class="tab" id="tab-konferencje">KONFERENCJE</div>
-        <button id="add-event-btn" class="add-event-btn"><i class="fas fa-plus"></i> Dodaj wydarzenie</button>
+        <div class="tab" id="tab-kalendarz">KALENDARZ</div>
+        <button id="add-event-btn" class="add-event-btn"><i class="fas fa-plus"></i>📆</button>
       </div>
       
       <div id="events-container">
         <!-- Events will be loaded here from JSON -->
+      </div>
+      
+      <div id="calendar-container" class="calendar-container">
+        <div class="calendar-header">
+          <button id="prev-month" class="calendar-nav-btn"><i class="fas fa-chevron-left"></i></button>
+          <div id="calendar-title" class="calendar-title">Maj 2025</div>
+          <button id="next-month" class="calendar-nav-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid">
+          <!-- Calendar will be generated here -->
+        </div>
       </div>
     </div>
     
@@ -290,6 +423,13 @@
       }
       }
       
+      // Global variables for calendar view
+      let currentDate = new Date();
+      const monthsInPolish = [
+        'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
+        'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+      ];
+      
       document.addEventListener('DOMContentLoaded', function() {
         // Function to load and display events
         function loadAndDisplayEvents() {
@@ -310,6 +450,9 @@
               
               // Initially display all events
               displayEvents(data.wszystkie);
+              
+              // Initialize calendar with current month
+              generateCalendar(currentDate);
             })
             .catch(error => {
               console.error('Błąd podczas ładowania danych:', error);
@@ -323,17 +466,26 @@
         // Tab switching functionality
         document.getElementById('tab-wszystkie').addEventListener('click', function() {
           setActiveTab('tab-wszystkie');
+          showEventsView();
           displayEvents(data.wszystkie);
         });
         
         document.getElementById('tab-meetupy').addEventListener('click', function() {
           setActiveTab('tab-meetupy');
+          showEventsView();
           displayEvents(data.meetupy);
         });
         
         document.getElementById('tab-konferencje').addEventListener('click', function() {
           setActiveTab('tab-konferencje');
+          showEventsView();
           displayEvents(data.konferencje);
+        });
+        
+        document.getElementById('tab-kalendarz').addEventListener('click', function() {
+          setActiveTab('tab-kalendarz');
+          showCalendarView();
+          generateCalendar(currentDate);
         });
         
         // Add event listener for the 'Dodaj wydarzenie' button
@@ -341,12 +493,36 @@
           window.open('https://github.com/pwicherski/testowanieoprogramowania.pl/tree/main/wydarzenia', '_blank');
         });
         
+        // Calendar navigation buttons
+        document.getElementById('prev-month').addEventListener('click', function() {
+          currentDate.setMonth(currentDate.getMonth() - 1);
+          generateCalendar(currentDate);
+        });
+        
+        document.getElementById('next-month').addEventListener('click', function() {
+          currentDate.setMonth(currentDate.getMonth() + 1);
+          generateCalendar(currentDate);
+        });
+        
         // Helper function to set active tab
         function setActiveTab(activeTabId) {
           document.getElementById('tab-wszystkie').classList.remove('active');
           document.getElementById('tab-meetupy').classList.remove('active');
           document.getElementById('tab-konferencje').classList.remove('active');
+          document.getElementById('tab-kalendarz').classList.remove('active');
           document.getElementById(activeTabId).classList.add('active');
+        }
+        
+        // Helper function to show events view and hide calendar view
+        function showEventsView() {
+          document.getElementById('events-container').style.display = 'block';
+          document.getElementById('calendar-container').style.display = 'none';
+        }
+        
+        // Helper function to show calendar view and hide events view
+        function showCalendarView() {
+          document.getElementById('events-container').style.display = 'none';
+          document.getElementById('calendar-container').style.display = 'block';
         }
       });
       
@@ -373,6 +549,155 @@
         document.getElementById('tab-wszystkie').textContent = `WSZYSTKIE [${futureWszystkie.length}]`;
         document.getElementById('tab-meetupy').textContent = `MEETUPY [${futureMeetupy.length}]`;
         document.getElementById('tab-konferencje').textContent = `KONFERENCJE [${futureKonferencje.length}]`;
+      }
+      
+      // Function to generate calendar
+      function generateCalendar(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        
+        // Update calendar title
+        document.getElementById('calendar-title').textContent = `${monthsInPolish[month]} ${year}`;
+        
+        // Get the first day of the month
+        const firstDay = new Date(year, month, 1);
+        // Get the last day of the month
+        const lastDay = new Date(year, month + 1, 0);
+        
+        // Get the day of the week for the first day (0 = Sunday, 1 = Monday, etc.)
+        let firstDayOfWeek = firstDay.getDay();
+        // Adjust for Monday as first day of week (0 = Monday, 6 = Sunday)
+        firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+        
+        // Get the number of days in the month
+        const daysInMonth = lastDay.getDate();
+        
+        // Get the grid container
+        const calendarGrid = document.getElementById('calendar-grid');
+        calendarGrid.innerHTML = '';
+        
+        // Add day headers (Monday to Sunday)
+        const daysOfWeek = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Nie'];
+        daysOfWeek.forEach(day => {
+          const dayHeader = document.createElement('div');
+          dayHeader.className = 'calendar-day-header';
+          dayHeader.textContent = day;
+          calendarGrid.appendChild(dayHeader);
+        });
+        
+        // Add days from previous month
+        const prevMonth = new Date(year, month, 0);
+        const daysInPrevMonth = prevMonth.getDate();
+        for (let i = 0; i < firstDayOfWeek; i++) {
+          const dayElement = document.createElement('div');
+          dayElement.className = 'calendar-day other-month';
+          dayElement.innerHTML = `<div class="calendar-day-number">${daysInPrevMonth - firstDayOfWeek + i + 1}</div>`;
+          calendarGrid.appendChild(dayElement);
+        }
+        
+        // Add days of current month
+        const today = new Date();
+        for (let i = 1; i <= daysInMonth; i++) {
+          const dayElement = document.createElement('div');
+          dayElement.className = 'calendar-day';
+          
+          // Check if this day is today
+          if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+            dayElement.classList.add('today');
+          }
+          
+          dayElement.innerHTML = `<div class="calendar-day-number">${i}</div>`;
+          
+          // Add events for this day
+          const currentDate = new Date(year, month, i);
+          addEventsToDay(dayElement, currentDate);
+          
+          calendarGrid.appendChild(dayElement);
+        }
+        
+        // Add days from next month to fill the grid
+        const totalCells = 42; // 6 rows of 7 days
+        const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
+        for (let i = 1; i <= remainingCells; i++) {
+          const dayElement = document.createElement('div');
+          dayElement.className = 'calendar-day other-month';
+          dayElement.innerHTML = `<div class="calendar-day-number">${i}</div>`;
+          calendarGrid.appendChild(dayElement);
+        }
+      }
+      
+      // Function to add events to a day in the calendar
+      function addEventsToDay(dayElement, date) {
+        // Format date to match event date format (e.g., "15 maja 2025")
+        const day = date.getDate();
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
+        
+        // Map of month indices to Polish month names in genitive case
+        const monthsGenitive = [
+          'stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
+          'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'
+        ];
+        
+        // Events for this day
+        const eventsForDay = data.wszystkie.filter(event => {
+          // Handle empty dates
+          if (!event.data || event.data.trim() === '') {
+            return false;
+          }
+          
+          // Check if it's a date range (e.g., "05-07 listopada 2025")
+          const parts = event.data.split(' ');
+          const dayPart = parts[0];
+          const monthName = parts[1];
+          const eventYear = parseInt(parts[2]);
+          
+          if (dayPart.includes('-')) {
+            // It's a date range
+            const [startDay, endDay] = dayPart.split('-').map(d => parseInt(d));
+            const eventMonthIndex = monthsGenitive.indexOf(monthName.toLowerCase());
+            
+            // Check if the current date falls within the range
+            if (year === eventYear && monthIndex === eventMonthIndex) {
+              return day >= startDay && day <= endDay;
+            }
+            return false;
+          } else {
+            // It's a single date
+            const eventDay = parseInt(dayPart);
+            const eventMonthIndex = monthsGenitive.indexOf(monthName.toLowerCase());
+            
+            return day === eventDay && monthIndex === eventMonthIndex && year === eventYear;
+          }
+        });
+        
+        // Add events to the day element
+        eventsForDay.forEach(event => {
+          const eventElement = document.createElement('div');
+          eventElement.className = `calendar-event ${event.kategoria.toLowerCase() === 'meetup' ? 'meetup' : 'conference'}`;
+          
+          // Format event name to wrap after 24 characters at whitespace
+          const eventName = event.nazwa;
+          eventElement.textContent = eventName;
+          
+          // Create tooltip with event details
+          const tooltipElement = document.createElement('div');
+          tooltipElement.className = 'calendar-event-tooltip';
+          tooltipElement.innerHTML = `
+            <strong>${event.nazwa}</strong><br>
+            <i class="fas fa-calendar-alt"></i> ${event.data}<br>
+            <i class="fas fa-map-marker-alt"></i> ${event.miejsce}<br>
+            <i class="fas fa-tag"></i> ${event.kategoria}
+          `;
+          
+          // Add click event to open the event link
+          eventElement.addEventListener('click', function() {
+            window.open(event.link, '_blank');
+          });
+          
+          dayElement.appendChild(eventElement);
+          dayElement.appendChild(tooltipElement);
+        });
       }
       
       function displayEvents(events) {
