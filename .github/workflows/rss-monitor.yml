@@ -27,7 +27,7 @@ jobs:
             https://testowanie-oprogramowania.pl/feed/
             https://automatyzacja.it/feed/
             https://www.wyrodek.pl/feed/
-          commit-directory: RSS
+          commit-directory: 'RSS'
           commit-message: Custom commit message
           debug: true
         env:
