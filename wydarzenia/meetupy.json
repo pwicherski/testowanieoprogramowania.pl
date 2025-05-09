@@ -61,7 +61,13 @@
         "data": "27 marca 2025",
         "miejsce": "Online",
         "link": "https://events.teams.microsoft.com/event/ce068226-b39c-415f-b5d5-e8ee5bdf8caf@888d5a15-2cbe-4e8b-b206-35923762a297"
-      }
-    
-  ]
+    },
+    {
+        "nazwa": "#33 spotkanie Trójmiejskiej Grupy Testerskiej",
+        "kategoria": "Meetup",
+        "data": "28 maja 2025",
+        "miejsce": "Gdańsk",
+        "link": "https://app.evenea.pl/event/tgt33/"
+    }    
+]
   
