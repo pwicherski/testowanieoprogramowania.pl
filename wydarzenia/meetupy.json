@@ -77,11 +77,18 @@
         "link": "https://events.teams.microsoft.com/event/58cb8548-da1b-47ff-92ea-b33f4828c3a8@888d5a15-2cbe-4e8b-b206-35923762a297"
     },
     {
-        "nazwa": "Warsaw Testers' Forum #3 - Automatyzuj! ",
+        "nazwa": "Warsaw Testers' Forum #3 - Automatyzuj!",
         "kategoria": "Meetup",
         "data": "29 maja 2025",
         "miejsce": "Warszawa",
         "link": "https://www.facebook.com/events/1935282277303489/"
-    }  
+    },
+    {
+        "nazwa": "KraQA#68",
+        "kategoria": "Meetup",
+        "data": "11 czerwca 2025",
+        "miejsce": "Warszawa",
+        "link": "https://www.meetup.com/kraqa-pl/events/307910487"
+    } 
 ]
   
