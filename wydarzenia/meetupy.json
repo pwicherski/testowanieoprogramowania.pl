@@ -96,6 +96,20 @@
         "data": "10 czerwca 2025",
         "miejsce": "Bydgoszcz",
         "link": "https://grajkonik.pl/produkt/52-meetup-luczniczqa/"
+    }, 
+    {
+        "nazwa": "KraQa #70",
+        "kategoria": "Meetup",
+        "data": "22 października 2025 20:00",
+        "miejsce": "Kraków",
+        "link": "https://www.meetup.com/pl-PL/kraqa-pl/events/311518468"
+    }, 
+    {
+        "nazwa": "WTF #6",
+        "kategoria": "Meetup",
+        "data": "20 listopada 2025 18:00",
+        "miejsce": "Warszawa",
+        "link": "https://www.linkedin.com/company/warsaw-testers-forum/posts/"
     }
 ]
   
